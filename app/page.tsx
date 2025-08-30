@@ -247,7 +247,7 @@ export default function Home() {
               onClick={onFrogClick}
             />
             <Typography.Text style={{ display: "block", marginTop: "1rem" }}>
-              Slime: {count} Slime/s: {slimePerSecond}
+              Slime: {count} | Slime/s: {slimePerSecond}
               
             </Typography.Text>
           </Content>
