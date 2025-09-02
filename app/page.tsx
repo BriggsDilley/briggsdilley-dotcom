@@ -13,34 +13,41 @@ const pressStart = Press_Start_2P({
 });
 
 // Helper function to safely parse numbers from localStorage
-const safeNumber = (value: string | null) =>
+const safeNumber = (value: string | undefined | null) =>
   value && !isNaN(Number(value)) ? Number(value) : 0;
 
 export default function Home() {
 
+  function getSafeLocalStorage(): Storage | undefined {
+   if (typeof window !== 'undefined') {
+       return localStorage;
+    }
+    return undefined
+}
+
  // Safe initialization from localStorage
   const [count, setCount] = useState<number>(
-    () => safeNumber(localStorage.getItem("count"))
+    () => safeNumber(getSafeLocalStorage()?.getItem("count"))
   );
   
   const [slimeFarmerCount, setSlimeFarmerCount] = useState<number>(
-  () => safeNumber(localStorage.getItem("slimeFarmerCount"))
+  () => safeNumber(getSafeLocalStorage()?.getItem("slimeFarmerCount"))
   );
 
   const [doubleClickPurchased, setDoubleClickPurchased] = useState<boolean>(
-  () => localStorage.getItem("doubleClickPurchased") === "true"
+  () => getSafeLocalStorage()?.getItem("doubleClickPurchased") === "true"
   );
   
   const [doubleFarmerPurchased, setDoubleFarmerPurchased] = useState<boolean>(
-  () => localStorage.getItem("doubleFarmerPurchased") === "true"
+  () => getSafeLocalStorage()?.getItem("doubleFarmerPurchased") === "true"
   );
 
   const [frogFarmCount, setFrogFarmCount] = useState<number>(
-    () => safeNumber(localStorage.getItem("frogFarmCount"))
+    () => safeNumber(getSafeLocalStorage()?.getItem("frogFarmCount"))
   );
 
   const [frogFactoryCount, setFrogFactoryCount] = useState<number>(
-    () => safeNumber(localStorage.getItem("frogFactoryCount"))
+    () => safeNumber(getSafeLocalStorage()?.getItem("frogFactoryCount"))
   );
 
   const [slimePerSecond, setSlimePerSecond] = useState<number>(0);
@@ -63,13 +70,13 @@ export default function Home() {
 
     setCount(cur => {
       const newCount = cur - frogFactoryCost;
-      localStorage.setItem("count", String(newCount));
+      getSafeLocalStorage()?.setItem("count", String(newCount));
       return newCount;
     }); //take the cost away from count
 
     setFrogFactoryCount(cur => {
       const newCount = cur + 1;
-      localStorage.setItem("frogFactoryCount", String(newCount));
+      getSafeLocalStorage()?.setItem("frogFactoryCount", String(newCount));
       return newCount;
     }); //add a frog factory to the frog farm count
   }, [count, frogFactoryCost]);
@@ -80,13 +87,13 @@ export default function Home() {
 
     setCount(cur => {
       const newCount = cur - frogFarmCost;
-      localStorage.setItem("count", String(newCount));
+      getSafeLocalStorage()?.setItem("count", String(newCount));
       return newCount;
     }); //take the cost away from count
 
     setFrogFarmCount(cur => {
       const newCount = cur + 1;
-      localStorage.setItem("frogFarmCount", String(newCount));
+      getSafeLocalStorage()?.setItem("frogFarmCount", String(newCount));
       return newCount;
     }); //add a frog farm to the frog farm count
   }, [count, frogFarmCost]);
@@ -96,7 +103,7 @@ export default function Home() {
   setCount(curCount => {
     const increment = doubleClickPurchased ? 2 : 1; 
     const newCount = curCount + increment;
-    localStorage.setItem("count", String(newCount));
+    getSafeLocalStorage()?.setItem("count", String(newCount));
     return newCount;
   });
   }, [doubleClickPurchased]);
@@ -111,13 +118,13 @@ export default function Home() {
 
     setCount((curCount) => {
       const newCount = curCount - farmerCost;
-      localStorage.setItem("count", `${newCount}`);
+      getSafeLocalStorage()?.setItem("count", `${newCount}`);
       return newCount;
     });
 
     setSlimeFarmerCount((curSlimeFarmerCount) => {
       const newFarmerCount = curSlimeFarmerCount + 1;
-      localStorage.setItem("slimeFarmerCount", `${newFarmerCount}`);
+      getSafeLocalStorage()?.setItem("slimeFarmerCount", `${newFarmerCount}`);
       return newFarmerCount;
     });
   }, [count, farmerCost]);
@@ -129,7 +136,7 @@ export default function Home() {
       const productionPerSecond = doubleFarmerPurchased ? slimeFarmerCount * 2 : slimeFarmerCount;
       setCount(curCount => {
         const newCount = curCount + productionPerSecond;
-        localStorage.setItem("count", String(newCount));
+        getSafeLocalStorage()?.setItem("count", String(newCount));
         return newCount;
       });
     }
@@ -151,9 +158,9 @@ export default function Home() {
         setSlimePerSecond(totalSlimeProduction);
 
         const newCount = cur + totalSlimeProduction;
-        localStorage.setItem("count", String(newCount));
+        getSafeLocalStorage()?.setItem("count", String(newCount));
         return newCount;
-        localStorage.setItem("count", String(newCount));
+        getSafeLocalStorage()?.setItem("count", String(newCount));
         return newCount;
       });
     } else {
@@ -196,7 +203,7 @@ export default function Home() {
               type="primary" 
               block
               onClick={onButtonClick} 
-              disabled={count < farmerCost}
+              disabled={Boolean(count < farmerCost) || true}
             >
               Buy Slime Farmer (Cost: {farmerCost})
             </Button>
@@ -265,11 +272,11 @@ export default function Home() {
                 if (count < 1000) return;
                 setCount(cur => {
                   const newCount = cur - 1000;
-                  localStorage.setItem("count", String(newCount));
+                  getSafeLocalStorage()?.setItem("count", String(newCount));
                   return newCount;
                 });
                 setDoubleClickPurchased(true);
-                localStorage.setItem("doubleClickPurchased", "true");
+                getSafeLocalStorage()?.setItem("doubleClickPurchased", "true");
               }}
             >
               <div style={{ textAlign: "center" }}>
@@ -289,11 +296,11 @@ export default function Home() {
                 if (count < 10000) return;
                 setCount(cur => {
                   const newCount = cur - 10000;
-                  localStorage.setItem("count", String(newCount));
+                  getSafeLocalStorage()?.setItem("count", String(newCount));
                   return newCount;
                 });
                 setDoubleFarmerPurchased(true);
-                localStorage.setItem("doubleFarmerPurchased", "true");
+                getSafeLocalStorage()?.setItem("doubleFarmerPurchased", "true");
               }}
             >
               <div style={{ textAlign: "center" }}>
