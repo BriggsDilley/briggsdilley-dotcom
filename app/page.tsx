@@ -203,7 +203,7 @@ export default function Home() {
               type="primary" 
               block
               onClick={onButtonClick} 
-              disabled={Boolean(count < farmerCost) || true}
+              disabled={count < farmerCost}
             >
               Buy Slime Farmer (Cost: {farmerCost})
             </Button>
